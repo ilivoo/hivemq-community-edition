@@ -21,6 +21,7 @@ import com.hivemq.migration.MigrationUnit;
 import com.hivemq.migration.Migrations;
 import com.hivemq.migration.TypeMigration;
 import com.hivemq.migration.meta.PersistenceType;
+import com.hivemq.migration.persistence.deliver.DeliverMessageTypeMigration;
 import com.hivemq.migration.persistence.payload.PublishPayloadTypeMigration;
 import com.hivemq.migration.persistence.retained.RetainedMessageTypeMigration;
 import org.slf4j.Logger;
@@ -41,12 +42,15 @@ public class PersistenceMigrator {
 
     private final @NotNull Provider<PublishPayloadTypeMigration> publishPayloadMigrationProvider;
     private final @NotNull Provider<RetainedMessageTypeMigration> retainedMessageMigrationProvider;
+    private final @NotNull Provider<DeliverMessageTypeMigration> deliverMessageMigrationProvider;
 
     @Inject
     public PersistenceMigrator(final @NotNull Provider<PublishPayloadTypeMigration> publishPayloadMigrationProvider,
-                               final @NotNull Provider<RetainedMessageTypeMigration> retainedMessageMigrationProvider) {
+                               final @NotNull Provider<RetainedMessageTypeMigration> retainedMessageMigrationProvider,
+                               final @NotNull Provider<DeliverMessageTypeMigration> deliverMessageMigrationProvider) {
         this.publishPayloadMigrationProvider = publishPayloadMigrationProvider;
         this.retainedMessageMigrationProvider = retainedMessageMigrationProvider;
+        this.deliverMessageMigrationProvider = deliverMessageMigrationProvider;
     }
 
     public void migratePersistenceTypes(final Map<MigrationUnit, PersistenceType> migrations) {
@@ -68,6 +72,9 @@ public class PersistenceMigrator {
                     break;
                 case FILE_PERSISTENCE_RETAINED_MESSAGES:
                     migrator = retainedMessageMigrationProvider.get();
+                    break;
+                case FILE_PERSISTENCE_DELIVER_MESSAGES:
+                    migrator = deliverMessageMigrationProvider.get();
                     break;
                 default:
                     continue;

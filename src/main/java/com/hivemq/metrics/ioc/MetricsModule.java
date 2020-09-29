@@ -20,14 +20,12 @@ import com.google.inject.Injector;
 import com.hivemq.bootstrap.ioc.SingletonModule;
 import com.hivemq.metrics.MetricsHolder;
 import com.hivemq.metrics.MetricsShutdownHook;
+import com.hivemq.metrics.gauges.DeliverMessagesGauge;
 import com.hivemq.metrics.gauges.OpenConnectionsGauge;
 import com.hivemq.metrics.gauges.RetainedMessagesGauge;
 import com.hivemq.metrics.gauges.SessionsGauge;
 import com.hivemq.metrics.handler.GlobalTrafficCounter;
-import com.hivemq.metrics.ioc.provider.GlobalTrafficCounterProvider;
-import com.hivemq.metrics.ioc.provider.OpenConnectionsGaugeProvider;
-import com.hivemq.metrics.ioc.provider.RetainedMessagesGaugeProvider;
-import com.hivemq.metrics.ioc.provider.SessionsGaugeProvider;
+import com.hivemq.metrics.ioc.provider.*;
 import com.hivemq.metrics.jmx.JmxReporterBootstrap;
 
 /**
@@ -59,6 +57,7 @@ public class MetricsModule extends SingletonModule {
         bind(GlobalTrafficCounter.class).toProvider(GlobalTrafficCounterProvider.class).asEagerSingleton();
         bind(OpenConnectionsGauge.class).toProvider(OpenConnectionsGaugeProvider.class).asEagerSingleton();
         bind(RetainedMessagesGauge.class).toProvider(RetainedMessagesGaugeProvider.class).asEagerSingleton();
+        bind(DeliverMessagesGauge.class).toProvider(DeliverMessagesGaugeProvider.class).asEagerSingleton();
         bind(JmxReporterBootstrap.class).asEagerSingleton();
         bind(MetricsShutdownHook.class).asEagerSingleton();
     }

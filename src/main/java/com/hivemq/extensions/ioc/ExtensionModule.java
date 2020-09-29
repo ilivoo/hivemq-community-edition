@@ -17,13 +17,13 @@ package com.hivemq.extensions.ioc;
 
 import com.hivemq.bootstrap.ioc.SingletonModule;
 import com.hivemq.bootstrap.ioc.lazysingleton.LazySingleton;
-import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.client.parameter.ServerInformation;
 import com.hivemq.extension.sdk.api.events.EventRegistry;
 import com.hivemq.extension.sdk.api.services.admin.AdminService;
 import com.hivemq.extension.sdk.api.services.auth.SecurityRegistry;
 import com.hivemq.extension.sdk.api.services.builder.*;
 import com.hivemq.extension.sdk.api.services.cluster.ClusterService;
+import com.hivemq.extension.sdk.api.services.deliver.DeliverRegistry;
 import com.hivemq.extension.sdk.api.services.interceptor.GlobalInterceptorRegistry;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
 import com.hivemq.extension.sdk.api.services.publish.PublishService;
@@ -33,6 +33,7 @@ import com.hivemq.extension.sdk.api.services.subscription.SubscriptionStore;
 import com.hivemq.extensions.PluginBootstrap;
 import com.hivemq.extensions.PluginBootstrapImpl;
 import com.hivemq.extensions.client.parameter.ServerInformationImpl;
+import com.hivemq.extensions.services.deliver.DeliverRegistryImpl;
 import com.hivemq.extensions.events.EventRegistryImpl;
 import com.hivemq.extensions.events.LifecycleEventListeners;
 import com.hivemq.extensions.events.LifecycleEventListenersImpl;
@@ -51,6 +52,8 @@ import com.hivemq.extensions.services.admin.AdminServiceImpl;
 import com.hivemq.extensions.services.auth.*;
 import com.hivemq.extensions.services.builder.*;
 import com.hivemq.extensions.services.cluster.ClusterServiceNoopImpl;
+import com.hivemq.extensions.services.deliver.Delivers;
+import com.hivemq.extensions.services.deliver.DeliversImpl;
 import com.hivemq.extensions.services.initializer.InitializerRegistryImpl;
 import com.hivemq.extensions.services.initializer.Initializers;
 import com.hivemq.extensions.services.initializer.InitializersImpl;
@@ -61,12 +64,9 @@ import com.hivemq.extensions.services.publish.PublishServiceImpl;
 import com.hivemq.extensions.services.publish.RetainedMessageStoreImpl;
 import com.hivemq.extensions.services.session.ClientServiceImpl;
 import com.hivemq.extensions.services.subscription.SubscriptionStoreImpl;
-import com.hivemq.util.ThreadFactoryUtil;
 
 import javax.inject.Singleton;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -100,6 +100,10 @@ public class ExtensionModule extends SingletonModule<Class<ExtensionModule>> {
 
         bind(InitializerRegistry.class).to(InitializerRegistryImpl.class);
         bind(Initializers.class).to(InitializersImpl.class).in(LazySingleton.class);
+
+        bind(DeliverRegistry.class).to(DeliverRegistryImpl.class);
+        bind(Delivers.class).to(DeliversImpl.class).in(LazySingleton.class);
+
         bind(ServerInformation.class).to(ServerInformationImpl.class).in(LazySingleton.class);
 
         bind(AtomicLong.class).annotatedWith(PluginTaskQueue.class).toInstance(new AtomicLong(0));

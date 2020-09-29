@@ -23,6 +23,8 @@ import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.migration.meta.PersistenceType;
 import com.hivemq.persistence.clientqueue.ClientQueueLocalPersistence;
 import com.hivemq.persistence.clientqueue.ClientQueueXodusLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageXodusLocalPersistence;
 import com.hivemq.persistence.ioc.provider.local.ClientSessionLocalProvider;
 import com.hivemq.persistence.ioc.provider.local.ClientSessionSubscriptionLocalProvider;
 import com.hivemq.persistence.local.ClientSessionLocalPersistence;
@@ -44,12 +46,14 @@ class LocalPersistenceFileModule extends SingletonModule<Class<LocalPersistenceF
     private final @NotNull Injector persistenceInjector;
     private final @NotNull PersistenceType payloadPersistenceType;
     private final @NotNull PersistenceType retainedPersistenceType;
+    private final @NotNull PersistenceType deliverPersistenceType;
 
     public LocalPersistenceFileModule(@NotNull final Injector persistenceInjector) {
         super(LocalPersistenceFileModule.class);
         this.persistenceInjector = persistenceInjector;
         this.payloadPersistenceType = InternalConfigurations.PAYLOAD_PERSISTENCE_TYPE.get();
         this.retainedPersistenceType = InternalConfigurations.RETAINED_MESSAGE_PERSISTENCE_TYPE.get();
+        this.deliverPersistenceType = InternalConfigurations.DELIVER_MESSAGE_PERSISTENCE_TYPE.get();
     }
 
     @Override
@@ -66,9 +70,15 @@ class LocalPersistenceFileModule extends SingletonModule<Class<LocalPersistenceF
                     RetainedMessageXodusLocalPersistence.class,
                     null);
         }
+        if (deliverPersistenceType == PersistenceType.FILE) {
+            bindLocalPersistence(DeliverMessageLocalPersistence.class,
+                    DeliverMessageXodusLocalPersistence.class,
+                    null);
+        }
 
         if (payloadPersistenceType == PersistenceType.FILE_NATIVE ||
-                retainedPersistenceType == PersistenceType.FILE_NATIVE) {
+                retainedPersistenceType == PersistenceType.FILE_NATIVE ||
+                deliverPersistenceType == PersistenceType.FILE_NATIVE) {
             install(new LocalPersistenceRocksDBModule(persistenceInjector));
         }
 

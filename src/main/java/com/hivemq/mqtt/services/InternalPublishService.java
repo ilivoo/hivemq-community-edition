@@ -37,4 +37,5 @@ public interface InternalPublishService {
     @NotNull
     ListenableFuture<PublishReturnCode> publish(@NotNull final PUBLISH publish, @NotNull final ExecutorService executorService, @Nullable final String sender);
 
+    void startDeliverSchedule();
 }

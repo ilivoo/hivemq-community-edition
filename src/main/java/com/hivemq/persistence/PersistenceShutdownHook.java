@@ -25,6 +25,7 @@ import com.hivemq.common.shutdown.HiveMQShutdownHook;
 import com.hivemq.persistence.clientqueue.ClientQueuePersistence;
 import com.hivemq.persistence.clientsession.ClientSessionPersistence;
 import com.hivemq.persistence.clientsession.ClientSessionSubscriptionPersistence;
+import com.hivemq.persistence.deliver.DeliverMessagePersistence;
 import com.hivemq.persistence.ioc.annotation.PayloadPersistence;
 import com.hivemq.persistence.ioc.annotation.Persistence;
 import com.hivemq.persistence.payload.PublishPayloadPersistence;
@@ -56,12 +57,14 @@ public class PersistenceShutdownHook extends HiveMQShutdownHook {
     private final @NotNull ListeningScheduledExecutorService payloadPersistenceExecutor;
     private final @NotNull SingleWriterService singleWriterService;
     private final @NotNull PublishPayloadPersistence payloadPersistence;
+    private final @NotNull DeliverMessagePersistence deliverMessagePersistence;
 
     @Inject
     PersistenceShutdownHook(final @NotNull ClientSessionPersistence clientSessionPersistence,
                             final @NotNull ClientSessionSubscriptionPersistence clientSessionSubscriptionPersistence,
                             final @NotNull IncomingMessageFlowPersistence incomingMessageFlowPersistence,
                             final @NotNull RetainedMessagePersistence retainedMessagePersistence,
+                            final @NotNull DeliverMessagePersistence deliverMessagePersistence,
                             final @NotNull PublishPayloadPersistence payloadPersistence,
                             final @NotNull ClientQueuePersistence clientQueuePersistence,
                             final @NotNull @Persistence ListeningExecutorService persistenceExecutorService,
@@ -73,6 +76,7 @@ public class PersistenceShutdownHook extends HiveMQShutdownHook {
         this.clientSessionSubscriptionPersistence = clientSessionSubscriptionPersistence;
         this.incomingMessageFlowPersistence = incomingMessageFlowPersistence;
         this.retainedMessagePersistence = retainedMessagePersistence;
+        this.deliverMessagePersistence = deliverMessagePersistence;
         this.clientQueuePersistence = clientQueuePersistence;
         this.persistenceExecutorService = persistenceExecutorService;
         this.persistenceScheduledExecutorService = persistenceScheduledExecutorService;
@@ -112,6 +116,7 @@ public class PersistenceShutdownHook extends HiveMQShutdownHook {
         builder.add(clientSessionPersistence.closeDB());
         builder.add(clientSessionSubscriptionPersistence.closeDB());
         builder.add(retainedMessagePersistence.closeDB());
+        builder.add(deliverMessagePersistence.closeDB());
         builder.add(clientQueuePersistence.closeDB());
 
         //We have to use a direct executor service here because the usual persistence executor might already be shut down

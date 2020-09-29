@@ -29,9 +29,11 @@ public class MetaInformation {
     private @Nullable String queuedMessagesPersistenceVersion = null;
     private @Nullable String subscriptionPersistenceVersion = null;
     private @Nullable String retainedMessagesPersistenceVersion = null;
+    private @Nullable String deliverMessagesPersistenceVersion = null;
     private @Nullable String publishPayloadPersistenceVersion = null;
 
     private @Nullable PersistenceType retainedMessagesPersistenceType = null;
+    private @Nullable PersistenceType deliverMessagesPersistenceType = null;
     private @Nullable PersistenceType publishPayloadPersistenceType = null;
 
     private boolean dataFolderPresent = false;
@@ -108,6 +110,15 @@ public class MetaInformation {
     }
 
     @Nullable
+    public String getDeliverMessagesPersistenceVersion() {
+        return deliverMessagesPersistenceVersion;
+    }
+
+    public void setDeliverMessagesPersistenceVersion(final String deliverMessagesPersistenceVersion) {
+        this.deliverMessagesPersistenceVersion = deliverMessagesPersistenceVersion;
+    }
+
+    @Nullable
     public String getPublishPayloadPersistenceVersion() {
         return publishPayloadPersistenceVersion;
     }
@@ -135,6 +146,15 @@ public class MetaInformation {
         this.publishPayloadPersistenceType = publishPayloadPersistenceType;
     }
 
+    @Nullable
+    public PersistenceType getDeliverMessagesPersistenceType() {
+        return deliverMessagesPersistenceType;
+    }
+
+    public void setDeliverMessagesPersistenceType(final PersistenceType deliverMessagesPersistenceType) {
+        this.deliverMessagesPersistenceType = deliverMessagesPersistenceType;
+    }
+
     @Override
     public String toString() {
         return "MetaInformation{" +
@@ -143,7 +163,9 @@ public class MetaInformation {
                 ", queuedMessagesPersistenceVersion='" + queuedMessagesPersistenceVersion + '\'' +
                 ", subscriptionPersistenceVersion='" + subscriptionPersistenceVersion + '\'' +
                 ", retainedMessagesPersistenceVersion='" + retainedMessagesPersistenceVersion + '\'' +
+                ", deliverMessagesPersistenceVersion='" + deliverMessagesPersistenceVersion + '\'' +
                 ", publishPayloadPersistenceVersion='" + publishPayloadPersistenceVersion + '\'' +
+                ", deliverMessagesPersistenceType='" + deliverMessagesPersistenceType + '\'' +
                 ", retainedMessagesPersistenceType='" + retainedMessagesPersistenceType + '\'' +
                 ", publishPayloadPersistenceType='" + publishPayloadPersistenceType + '\'' +
                 '}';

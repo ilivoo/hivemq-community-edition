@@ -20,6 +20,8 @@ import com.hivemq.bootstrap.ioc.SingletonModule;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.persistence.clientqueue.ClientQueueLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageMemoryLocalPersistence;
 import com.hivemq.persistence.local.ClientSessionLocalPersistence;
 import com.hivemq.persistence.local.ClientSessionSubscriptionLocalPersistence;
 import com.hivemq.persistence.local.memory.ClientQueueMemoryLocalPersistence;
@@ -52,6 +54,9 @@ class LocalPersistenceMemoryModule extends SingletonModule<Class<LocalPersistenc
 
         bindLocalPersistence(RetainedMessageLocalPersistence.class,
                 RetainedMessageMemoryLocalPersistence.class);
+
+        bindLocalPersistence(DeliverMessageLocalPersistence.class,
+                DeliverMessageMemoryLocalPersistence.class);
 
         bindLocalPersistence(ClientSessionSubscriptionLocalPersistence.class,
                 ClientSessionSubscriptionMemoryLocalPersistence.class);

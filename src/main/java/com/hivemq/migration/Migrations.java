@@ -24,6 +24,7 @@ import com.hivemq.migration.meta.MetaFileService;
 import com.hivemq.migration.meta.MetaInformation;
 import com.hivemq.migration.meta.PersistenceType;
 import com.hivemq.migration.persistence.PersistenceMigrator;
+import com.hivemq.persistence.deliver.DeliverMessageLocalPersistence;
 import com.hivemq.persistence.payload.PublishPayloadLocalPersistence;
 import com.hivemq.persistence.retained.RetainedMessageLocalPersistence;
 import com.hivemq.util.LocalPersistenceFileUtil;
@@ -73,24 +74,29 @@ public class Migrations {
         }
 
         final PersistenceType previousRetainedType;
+        final PersistenceType previousDeliverType;
         final PersistenceType previousPayloadType;
         if (!metaInformation.isMetaFilePresent()) {
             log.trace("No meta file present, assuming HiveMQ version 2019.1 => Migration needed.");
             MIGRATION_LOGGER.info("No meta file present, assuming HiveMQ version 2019.1 => Migration needed.");
             previousPayloadType = PersistenceType.FILE;
             previousRetainedType = PersistenceType.FILE;
+            previousDeliverType = PersistenceType.FILE;
             final MetaInformation newMetaInformation = new MetaInformation();
             newMetaInformation.setPublishPayloadPersistenceType(previousPayloadType);
             newMetaInformation.setRetainedMessagesPersistenceType(previousRetainedType);
+            newMetaInformation.setDeliverMessagesPersistenceType(previousDeliverType);
             MetaFileService.writeMetaFile(systemInformation, newMetaInformation);
         } else {
             Preconditions.checkNotNull(metaInformation.getRetainedMessagesPersistenceType());
             Preconditions.checkNotNull(metaInformation.getPublishPayloadPersistenceType());
             previousRetainedType = metaInformation.getRetainedMessagesPersistenceType();
+            previousDeliverType = metaInformation.getDeliverMessagesPersistenceType();
             previousPayloadType = metaInformation.getPublishPayloadPersistenceType();
         }
 
         final PersistenceType currentRetainedType = InternalConfigurations.RETAINED_MESSAGE_PERSISTENCE_TYPE.get();
+        final PersistenceType currentDeliverType = InternalConfigurations.DELIVER_MESSAGE_PERSISTENCE_TYPE.get();
         final PersistenceType currentPayloadType = InternalConfigurations.PAYLOAD_PERSISTENCE_TYPE.get();
 
         final Map<MigrationUnit, PersistenceType> neededMigrations = new EnumMap<>(MigrationUnit.class);
@@ -100,6 +106,9 @@ public class Migrations {
         }
         if (!previousRetainedType.equals(currentRetainedType) && isPreviousPersistenceExistent(systemInformation, RetainedMessageLocalPersistence.PERSISTENCE_NAME)) {
             neededMigrations.put(MigrationUnit.FILE_PERSISTENCE_RETAINED_MESSAGES, currentRetainedType);
+        }
+        if (!previousDeliverType.equals(currentDeliverType) && isPreviousPersistenceExistent(systemInformation, DeliverMessageLocalPersistence.PERSISTENCE_NAME)) {
+            neededMigrations.put(MigrationUnit.FILE_PERSISTENCE_DELIVER_MESSAGES, currentDeliverType);
         }
 
         if (neededMigrations.isEmpty()) {

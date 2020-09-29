@@ -41,7 +41,7 @@ public class PersistenceMigratorTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        persistenceMigrator = new PersistenceMigrator(() -> publishPayloadTypeMigration, () -> retainedMessageTypeMigration);
+        persistenceMigrator = new PersistenceMigrator(() -> publishPayloadTypeMigration, () -> retainedMessageTypeMigration, null);
     }
 
     @Test

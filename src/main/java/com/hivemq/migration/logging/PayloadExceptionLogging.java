@@ -48,8 +48,9 @@ public class PayloadExceptionLogging {
     }
 
     public synchronized void addLogging(final long payloadId,
+                                        final String persistType,
                                         @Nullable final Boolean retained,
-                                        @Nullable final String retainedTopic) {
+                                        @Nullable final String topic) {
 
         final MissingMessageInformation information;
         if (payloadIdMissingMessagesMap.containsKey(payloadId)) {
@@ -57,10 +58,10 @@ public class PayloadExceptionLogging {
         } else {
             information = new MissingMessageInformation(payloadId);
         }
-
-        if (retained != null && retainedTopic != null) {
+        information.setPersistType(persistType);
+        if (retained != null && topic != null) {
             information.setRetained(retained);
-            information.setTopic(retainedTopic);
+            information.setTopic(topic);
         }
 
         payloadIdMissingMessagesMap.put(payloadId, information);
@@ -82,11 +83,15 @@ public class PayloadExceptionLogging {
         final Formatter formatter = new Formatter(stringBuilder);
 
         formatter.format("%n%1$31s%n%n", "MISSING PAYLOADS");
-        formatter.format("%1$19s | %2$8s | %3$47s %n", "payloadId", "retained", "topic");
+        formatter.format("%1$19s | %2$13s | %3$8s | %4$47s %n", "payloadId", "persistType","retained", "topic");
         formatter.format("%1$s%n", bigLine);
         for (final Map.Entry<Long, MissingMessageInformation> entry : payloadIdMissingMessagesMap.entrySet()) {
             final MissingMessageInformation missingMessage = entry.getValue();
-            formatter.format("%1$19d | %2$8b | %3$47s %n", missingMessage.getPayloadId(), missingMessage.isRetained(), missingMessage.getTopic());
+            formatter.format("%1$19d | %2$13s | %3$8b | %4$47s %n",
+                    missingMessage.getPayloadId(),
+                    missingMessage.getPersistType(),
+                    missingMessage.isRetained(),
+                    missingMessage.getTopic());
             formatter.format("%n%1$s%n", smallLine);
         }
 
@@ -103,11 +108,20 @@ public class PayloadExceptionLogging {
 
     static class MissingMessageInformation {
         private final long payloadId;
+        private String persistType;
         private boolean retained;
         private @Nullable String topic;
 
         private MissingMessageInformation(final long payloadId) {
             this.payloadId = payloadId;
+        }
+
+        public String getPersistType() {
+            return persistType;
+        }
+
+        public void setPersistType(final String persistType) {
+            this.persistType = persistType;
         }
 
         public long getPayloadId() {

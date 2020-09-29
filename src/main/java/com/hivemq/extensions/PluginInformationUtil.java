@@ -45,6 +45,10 @@ public class PluginInformationUtil {
 
     private static final Logger log = LoggerFactory.getLogger(PluginInformationUtil.class);
 
+    public static @NotNull ClientInformation getClientInformation(@NotNull final String clientId) {
+        return new ClientInformationImpl(clientId);
+    }
+
     public static @NotNull ClientInformation getAndSetClientInformation(@NotNull final Channel channel, @NotNull final String clientId) {
         ClientInformation clientInformation = channel.attr(ChannelAttributes.PLUGIN_CLIENT_INFORMATION).get();
         if (clientInformation == null) {

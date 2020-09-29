@@ -32,6 +32,7 @@ import com.hivemq.extension.sdk.api.services.admin.AdminService;
 import com.hivemq.extension.sdk.api.services.auth.SecurityRegistry;
 import com.hivemq.extension.sdk.api.services.builder.*;
 import com.hivemq.extension.sdk.api.services.cluster.ClusterService;
+import com.hivemq.extension.sdk.api.services.deliver.DeliverRegistry;
 import com.hivemq.extension.sdk.api.services.interceptor.GlobalInterceptorRegistry;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
 import com.hivemq.extension.sdk.api.services.publish.PublishService;
@@ -117,6 +118,9 @@ public class PluginStaticInitializerImplTest {
     private PublishService publishService;
 
     @Mock
+    private DeliverRegistry deliverRegistry;
+
+    @Mock
     private ChannelPersistence channelPersistence;
 
     @Mock
@@ -155,7 +159,7 @@ public class PluginStaticInitializerImplTest {
                 new AuthorizersImpl(hiveMQExtensions));
         servicesDependencies = Mockito.spy(
                 new PluginServicesDependenciesImpl(metricRegistry, initializerRegistry, retainedMessageStore,
-                        clientService, subscriptionStore, managedPluginExecutorService, publishService,
+                        clientService, subscriptionStore, managedPluginExecutorService, publishService, deliverRegistry,
                         hiveMQExtensions, securityRegistry, eventRegistry, clusterService, interceptorRegistry,
                         adminService));
         builderDependencies = Mockito.spy(

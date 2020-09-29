@@ -23,6 +23,7 @@ import com.hivemq.extension.sdk.api.services.ManagedExtensionExecutorService;
 import com.hivemq.extension.sdk.api.services.admin.AdminService;
 import com.hivemq.extension.sdk.api.services.auth.SecurityRegistry;
 import com.hivemq.extension.sdk.api.services.cluster.ClusterService;
+import com.hivemq.extension.sdk.api.services.deliver.DeliverRegistry;
 import com.hivemq.extension.sdk.api.services.interceptor.GlobalInterceptorRegistry;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
 import com.hivemq.extension.sdk.api.services.publish.PublishService;
@@ -50,6 +51,7 @@ public class PluginServicesDependenciesImpl implements PluginServicesDependencie
     private final @NotNull SubscriptionStore subscriptionStore;
     private final @NotNull GlobalManagedExtensionExecutorService globalManagedExtensionExecutorService;
     private final @NotNull PublishService publishService;
+    private final @NotNull DeliverRegistry deliverRegistry;
     private final @NotNull HiveMQExtensions hiveMQExtensions;
 
     private final @NotNull SecurityRegistry securityRegistry;
@@ -68,6 +70,7 @@ public class PluginServicesDependenciesImpl implements PluginServicesDependencie
             final @NotNull SubscriptionStore subscriptionStore,
             final @NotNull GlobalManagedExtensionExecutorService globalManagedExtensionExecutorService,
             final @NotNull PublishService publishService,
+            final @NotNull DeliverRegistry deliverRegistry,
             final @NotNull HiveMQExtensions hiveMQExtensions,
             final @NotNull SecurityRegistry securityRegistry,
             final @NotNull EventRegistry eventRegistry,
@@ -76,6 +79,7 @@ public class PluginServicesDependenciesImpl implements PluginServicesDependencie
             final @NotNull AdminService adminService) {
         this.metricRegistry = metricRegistry;
         this.publishService = publishService;
+        this.deliverRegistry = deliverRegistry;
         this.securityRegistry = securityRegistry;
         this.initializerRegistry = initializerRegistry;
         this.retainedMessageStore = retainedMessageStore;
@@ -102,6 +106,7 @@ public class PluginServicesDependenciesImpl implements PluginServicesDependencie
         builder.put(ClientService.class.getCanonicalName(), clientService);
         builder.put(SubscriptionStore.class.getCanonicalName(), subscriptionStore);
         builder.put(PublishService.class.getCanonicalName(), publishService);
+        builder.put(DeliverRegistry.class.getCanonicalName(), deliverRegistry);
         builder.put(ManagedExtensionExecutorService.class.getCanonicalName(), getManagedExecutorService(classLoader));
         builder.put(EventRegistry.class.getCanonicalName(), eventRegistry);
         builder.put(ClusterService.class.getCanonicalName(), clusterService);

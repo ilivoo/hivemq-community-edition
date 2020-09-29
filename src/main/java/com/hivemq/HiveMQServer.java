@@ -34,6 +34,7 @@ import com.hivemq.metrics.MetricRegistryLogger;
 import com.hivemq.migration.MigrationUnit;
 import com.hivemq.migration.Migrations;
 import com.hivemq.migration.meta.PersistenceType;
+import com.hivemq.mqtt.services.InternalPublishService;
 import com.hivemq.persistence.PersistenceStartup;
 import com.hivemq.persistence.payload.PublishPayloadPersistence;
 import com.hivemq.statistics.UsageStatistics;
@@ -61,17 +62,20 @@ public class HiveMQServer {
     private final @NotNull PublishPayloadPersistence payloadPersistence;
     private final @NotNull PluginBootstrap pluginBootstrap;
     private final @NotNull AdminService adminService;
+    private final @NotNull InternalPublishService publishService;
 
     @Inject
     HiveMQServer(
             final @NotNull HiveMQNettyBootstrap nettyBootstrap,
             final @NotNull PublishPayloadPersistence payloadPersistence,
+            final @NotNull InternalPublishService publishService,
             final @NotNull PluginBootstrap pluginBootstrap,
             final @NotNull AdminService adminService) {
 
         this.nettyBootstrap = nettyBootstrap;
         this.payloadPersistence = payloadPersistence;
         this.pluginBootstrap = pluginBootstrap;
+        this.publishService = publishService;
         this.adminService = adminService;
     }
 
@@ -88,6 +92,8 @@ public class HiveMQServer {
         new StartupListenerVerifier(startupInformation).verifyAndPrint();
 
         ((AdminServiceImpl) adminService).hivemqStarted();
+
+        publishService.startDeliverSchedule();
     }
 
     public static void main(final @NotNull String[] args) throws Exception {

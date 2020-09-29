@@ -76,7 +76,7 @@ public class PluginBootstrapImpl implements PluginBootstrap {
 
         //start them if needed
         lifecycleHandler.handlePluginEvents(hiveMQPluginEvents)
-                .thenAccept(((v) -> authenticators.checkAuthenticationSafetyAndLifeness()));
+                .thenAccept(((v) -> authenticators.checkAuthenticationSafetyAndLifeness())).join();
     }
 
     @NotNull

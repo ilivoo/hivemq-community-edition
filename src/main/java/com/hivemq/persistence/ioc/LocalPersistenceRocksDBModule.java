@@ -21,6 +21,8 @@ import com.hivemq.configuration.service.InternalConfigurations;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.migration.meta.PersistenceType;
+import com.hivemq.persistence.deliver.DeliverMessageLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageRocksDBLocalPersistence;
 import com.hivemq.persistence.local.xodus.RetainedMessageRocksDBLocalPersistence;
 import com.hivemq.persistence.payload.PublishPayloadLocalPersistence;
 import com.hivemq.persistence.payload.PublishPayloadRocksDBLocalPersistence;
@@ -36,12 +38,14 @@ class LocalPersistenceRocksDBModule extends SingletonModule<Class<LocalPersisten
     private final Injector persistenceInjector;
     private final PersistenceType payloadPersistenceType;
     private final PersistenceType retainedPersistenceType;
+    private final PersistenceType deliverPersistenceType;
 
     LocalPersistenceRocksDBModule(@NotNull final Injector persistenceInjector) {
         super(LocalPersistenceRocksDBModule.class);
         this.persistenceInjector = persistenceInjector;
         this.payloadPersistenceType = InternalConfigurations.PAYLOAD_PERSISTENCE_TYPE.get();
         this.retainedPersistenceType = InternalConfigurations.RETAINED_MESSAGE_PERSISTENCE_TYPE.get();
+        this.deliverPersistenceType = InternalConfigurations.DELIVER_MESSAGE_PERSISTENCE_TYPE.get();
     }
 
     @Override
@@ -49,6 +53,11 @@ class LocalPersistenceRocksDBModule extends SingletonModule<Class<LocalPersisten
         if (retainedPersistenceType == PersistenceType.FILE_NATIVE) {
             bindLocalPersistence(
                     RetainedMessageLocalPersistence.class, RetainedMessageRocksDBLocalPersistence.class, null);
+        }
+
+        if (deliverPersistenceType == PersistenceType.FILE_NATIVE) {
+            bindLocalPersistence(
+                    DeliverMessageLocalPersistence.class, DeliverMessageRocksDBLocalPersistence.class, null);
         }
 
         if (payloadPersistenceType == PersistenceType.FILE_NATIVE) {

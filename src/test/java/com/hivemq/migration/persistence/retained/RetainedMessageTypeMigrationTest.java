@@ -127,7 +127,7 @@ public class RetainedMessageTypeMigrationTest {
                 null,
                 null,
                 1234L));
-        verify(payloadExceptionLogging, times(1)).addLogging(1L, true, "topic");
+        verify(payloadExceptionLogging, times(1)).addLogging(1L, "", true, "topic");
 
     }
 
@@ -144,7 +144,7 @@ public class RetainedMessageTypeMigrationTest {
                 null,
                 null,
                 1234L));
-        verify(payloadExceptionLogging, never()).addLogging(anyLong(), any(), any());
+        verify(payloadExceptionLogging, never()).addLogging(anyLong(),"", any(), any());
     }
 
     @Test

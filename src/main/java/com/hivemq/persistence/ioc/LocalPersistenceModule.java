@@ -30,6 +30,8 @@ import com.hivemq.persistence.clientqueue.ClientQueueLocalPersistence;
 import com.hivemq.persistence.clientqueue.ClientQueuePersistence;
 import com.hivemq.persistence.clientqueue.ClientQueuePersistenceImpl;
 import com.hivemq.persistence.clientsession.*;
+import com.hivemq.persistence.deliver.DeliverMessagePersistence;
+import com.hivemq.persistence.deliver.DeliverMessagePersistenceProvider;
 import com.hivemq.persistence.ioc.provider.local.ClientSessionLocalProvider;
 import com.hivemq.persistence.ioc.provider.local.ClientSessionSubscriptionLocalProvider;
 import com.hivemq.persistence.ioc.provider.local.IncomingMessageFlowPersistenceLocalProvider;
@@ -79,6 +81,10 @@ class LocalPersistenceModule extends SingletonModule<Class<LocalPersistenceModul
 
         /* Retained Message */
         bind(RetainedMessagePersistence.class).toProvider(RetainedMessagePersistenceProvider.class)
+                .in(LazySingleton.class);
+
+        /* Deliver Message */
+        bind(DeliverMessagePersistence.class).toProvider(DeliverMessagePersistenceProvider.class)
                 .in(LazySingleton.class);
 
         /* Channel */

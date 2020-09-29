@@ -82,6 +82,15 @@ public class HiveMQMetrics {
             HiveMQMetric.gaugeValue("com.hivemq.messages.retained.current");
 
     /**
+     * represents a {@link Gauge}, which holds the current amount of retained messages
+     *
+     * @since 3.0
+     */
+    public static final HiveMQMetric<Gauge<Number>> DELIVER_MESSAGES_CURRENT =
+            HiveMQMetric.gaugeValue("com.hivemq.messages.deliver.current");
+
+
+    /**
      * represents a {@link Gauge}, which holds the total amount of read bytes
      *
      * @since 3.0

@@ -45,12 +45,13 @@ public class SingleWriterService {
 
     private static final Logger log = LoggerFactory.getLogger(SingleWriterService.class);
 
-    private static final int AMOUNT_OF_PRODUCERS = 5;
+    private static final int AMOUNT_OF_PRODUCERS = 6;
     private static final int RETAINED_MESSAGE_QUEUE_INDEX = 0;
     private static final int CLIENT_SESSION_QUEUE_INDEX = 1;
     private static final int SUBSCRIPTION_QUEUE_INDEX = 2;
     private static final int QUEUED_MESSAGES_QUEUE_INDEX = 3;
     private static final int ATTRIBUTE_STORE_QUEUE_INDEX = 4;
+    private static final int DELIVER_MESSAGE_QUEUE_INDEX = 5;
 
     private final int persistenceBucketCount;
     private final int threadPoolSize;
@@ -166,6 +167,10 @@ public class SingleWriterService {
 
     public ProducerQueues getRetainedMessageQueue() {
         return producers[RETAINED_MESSAGE_QUEUE_INDEX];
+    }
+
+    public ProducerQueues getDeliverMessageQueue() {
+        return producers[DELIVER_MESSAGE_QUEUE_INDEX];
     }
 
     public ProducerQueues getClientSessionQueue() {

@@ -22,6 +22,7 @@ import com.hivemq.extension.sdk.api.services.ManagedExtensionExecutorService;
 import com.hivemq.extension.sdk.api.services.admin.AdminService;
 import com.hivemq.extension.sdk.api.services.auth.SecurityRegistry;
 import com.hivemq.extension.sdk.api.services.cluster.ClusterService;
+import com.hivemq.extension.sdk.api.services.deliver.DeliverRegistry;
 import com.hivemq.extension.sdk.api.services.interceptor.GlobalInterceptorRegistry;
 import com.hivemq.extension.sdk.api.services.intializer.InitializerRegistry;
 import com.hivemq.extension.sdk.api.services.publish.PublishService;
@@ -53,7 +54,8 @@ public class PluginServicesDependenciesImplTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         pluginServicesDependencies = new PluginServicesDependenciesImpl(new MetricRegistry(), mock(InitializerRegistry.class), mock(RetainedMessageStore.class),
-                mock(ClientService.class), mock(SubscriptionStore.class), mock(GlobalManagedExtensionExecutorService.class), mock(PublishService.class),
+                mock(ClientService.class), mock(SubscriptionStore.class), mock(GlobalManagedExtensionExecutorService.class), mock(PublishService.class), mock(
+                DeliverRegistry.class),
                 mock(HiveMQExtensions.class), mock(SecurityRegistry.class), mock(EventRegistry.class), mock(ClusterService.class),
                 mock(GlobalInterceptorRegistry.class), mock(AdminService.class));
     }

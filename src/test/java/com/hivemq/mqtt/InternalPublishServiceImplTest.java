@@ -82,6 +82,7 @@ public class InternalPublishServiceImplTest {
         when(publishDistributor.distributeToSharedSubscribers(anySet(), any(PUBLISH.class), eq(executorService))).thenReturn(Futures.immediateFuture(null));
 
         publishService = new InternalPublishServiceImpl(
+                null, null, null, null, null, null,
                 retainedMessagePersistence,
                 topicTree,
                 publishDistributor);
@@ -91,7 +92,7 @@ public class InternalPublishServiceImplTest {
     public void test_retained_message_remove() throws Exception {
 
         when(topicTree.getSubscribers(anyString())).thenReturn(ImmutableSet.of());
-        publishService = new InternalPublishServiceImpl(retainedMessagePersistence, topicTree, publishDistributor);
+        publishService = new InternalPublishServiceImpl(null, null, null, null, null, null, retainedMessagePersistence, topicTree, publishDistributor);
 
         final PUBLISH publish = TestMessageUtil.createMqtt3Publish("hivemqId", "subonly", QoS.AT_LEAST_ONCE, new byte[0], true);
 
@@ -107,7 +108,7 @@ public class InternalPublishServiceImplTest {
     public void test_retained_message_remove_failed() throws Exception {
 
         when(topicTree.getSubscribers(anyString())).thenReturn(ImmutableSet.of());
-        publishService = new InternalPublishServiceImpl(retainedMessagePersistence, topicTree, publishDistributor);
+        publishService = new InternalPublishServiceImpl(null, null, null, null, null, null, retainedMessagePersistence, topicTree, publishDistributor);
 
         final PUBLISH publish = TestMessageUtil.createMqtt3Publish("hivemqId", "subonly", QoS.AT_LEAST_ONCE, new byte[0], true);
 

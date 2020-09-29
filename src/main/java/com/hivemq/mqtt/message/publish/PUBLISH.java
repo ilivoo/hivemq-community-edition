@@ -69,9 +69,8 @@ public class PUBLISH extends MqttMessageWithUserProperties implements Mqtt3PUBLI
     private final boolean isNewTopicAlias;
     private final @Nullable ImmutableIntArray subscriptionIdentifiers;
 
-    private final @Nullable PublishPayloadPersistence persistence;
-    private @Nullable
-    final Long payloadId;
+    private @Nullable PublishPayloadPersistence persistence;
+    private @Nullable Long payloadId;
 
     private int sizeInMemory = SIZE_NOT_CALCULATED;
 
@@ -346,6 +345,18 @@ public class PUBLISH extends MqttMessageWithUserProperties implements Mqtt3PUBLI
     @Nullable
     public PublishPayloadPersistence getPersistence() {
         return persistence;
+    }
+
+    public void setPersistence(final PublishPayloadPersistence persistence) {
+        this.persistence = persistence;
+    }
+
+    public void setPayloadId(final Long payloadId) {
+        this.payloadId = payloadId;
+    }
+
+    public void setPayload(final byte[] payload) {
+        this.payload = payload;
     }
 
     @Override

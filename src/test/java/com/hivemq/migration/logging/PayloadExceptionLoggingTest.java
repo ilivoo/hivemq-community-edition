@@ -49,18 +49,18 @@ public class PayloadExceptionLoggingTest {
     @Test(timeout = 5000)
     public void test_message_logging() throws Exception {
 
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, null, null);
-        payloadExceptionLogging.addLogging(1, true, "topic1");
-        payloadExceptionLogging.addLogging(2, true, "topic2");
-        payloadExceptionLogging.addLogging(3, true, "topic3");
-        payloadExceptionLogging.addLogging(4, true, "topic4");
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", null, null);
+        payloadExceptionLogging.addLogging(1, "", true, "topic1");
+        payloadExceptionLogging.addLogging(2, "", true, "topic2");
+        payloadExceptionLogging.addLogging(3, "", true, "topic3");
+        payloadExceptionLogging.addLogging(4, "", true, "topic4");
 
         final Map<Long, PayloadExceptionLogging.MissingMessageInformation> map = payloadExceptionLogging.getMap();
 
@@ -78,7 +78,7 @@ public class PayloadExceptionLoggingTest {
 
     @Test(timeout = 5000)
     public void test_message_logging_gets_cleared() throws Exception {
-        payloadExceptionLogging.addLogging(1, null, "topic");
+        payloadExceptionLogging.addLogging(1, "", null, "topic");
 
         final Map<Long, PayloadExceptionLogging.MissingMessageInformation> map1 = payloadExceptionLogging.getMap();
         assertFalse(map1.isEmpty());

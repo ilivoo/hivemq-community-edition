@@ -19,6 +19,8 @@ import com.hivemq.bootstrap.ioc.SingletonModule;
 import com.hivemq.configuration.service.InternalConfigurations;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
 import com.hivemq.migration.meta.PersistenceType;
+import com.hivemq.persistence.deliver.DeliverMessageLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageRocksDBLocalPersistence;
 import com.hivemq.persistence.local.xodus.RetainedMessageRocksDBLocalPersistence;
 import com.hivemq.persistence.payload.PublishPayloadLocalPersistence;
 import com.hivemq.persistence.payload.PublishPayloadRocksDBLocalPersistence;
@@ -33,18 +35,25 @@ class PersistenceMigrationRocksDBModule extends SingletonModule<Class<Persistenc
 
     private final @NotNull PersistenceType payloadPersistenceType;
     private final @NotNull PersistenceType retainedPersistenceType;
+    private final @NotNull PersistenceType deliverPersistenceType;
 
     PersistenceMigrationRocksDBModule() {
         super(PersistenceMigrationRocksDBModule.class);
 
         this.payloadPersistenceType = InternalConfigurations.PAYLOAD_PERSISTENCE_TYPE.get();
         this.retainedPersistenceType = InternalConfigurations.RETAINED_MESSAGE_PERSISTENCE_TYPE.get();
+        this.deliverPersistenceType = InternalConfigurations.DELIVER_MESSAGE_PERSISTENCE_TYPE.get();
     }
 
     @Override
     protected void configure() {
         if (retainedPersistenceType == PersistenceType.FILE_NATIVE) {
             bind(RetainedMessageLocalPersistence.class).to(RetainedMessageRocksDBLocalPersistence.class)
+                    .in(Singleton.class);
+        }
+
+        if (deliverPersistenceType == PersistenceType.FILE_NATIVE) {
+            bind(DeliverMessageLocalPersistence.class).to(DeliverMessageRocksDBLocalPersistence.class)
                     .in(Singleton.class);
         }
 

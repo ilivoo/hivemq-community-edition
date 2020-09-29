@@ -22,6 +22,8 @@ import com.hivemq.migration.meta.MetaFileService;
 import com.hivemq.migration.meta.MetaInformation;
 import com.hivemq.migration.meta.PersistenceType;
 import com.hivemq.persistence.clientqueue.ClientQueueXodusLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageRocksDBLocalPersistence;
+import com.hivemq.persistence.deliver.DeliverMessageXodusLocalPersistence;
 import com.hivemq.persistence.local.xodus.RetainedMessageRocksDBLocalPersistence;
 import com.hivemq.persistence.local.xodus.RetainedMessageXodusLocalPersistence;
 import com.hivemq.persistence.local.xodus.clientsession.ClientSessionSubscriptionXodusLocalPersistence;
@@ -37,11 +39,13 @@ class MigrationFinisher {
 
     private final @NotNull SystemInformation systemInformation;
     private final @NotNull PersistenceType retainedType;
+    private final @NotNull PersistenceType deliverType;
     private final @NotNull PersistenceType payloadType;
 
     public MigrationFinisher(final @NotNull SystemInformation systemInformation) {
         this.systemInformation = systemInformation;
         this.retainedType = InternalConfigurations.RETAINED_MESSAGE_PERSISTENCE_TYPE.get();
+        this.deliverType = InternalConfigurations.DELIVER_MESSAGE_PERSISTENCE_TYPE.get();
         this.payloadType = InternalConfigurations.PAYLOAD_PERSISTENCE_TYPE.get();
     }
 
@@ -58,8 +62,10 @@ class MigrationFinisher {
         metaFile.setQueuedMessagesPersistenceVersion(ClientQueueXodusLocalPersistence.PERSISTENCE_VERSION);
         metaFile.setSubscriptionPersistenceVersion(ClientSessionSubscriptionXodusLocalPersistence.PERSISTENCE_VERSION);
         metaFile.setRetainedMessagesPersistenceVersion(retainedType == PersistenceType.FILE_NATIVE ? RetainedMessageRocksDBLocalPersistence.PERSISTENCE_VERSION : RetainedMessageXodusLocalPersistence.PERSISTENCE_VERSION);
+        metaFile.setDeliverMessagesPersistenceVersion(deliverType == PersistenceType.FILE_NATIVE ? DeliverMessageRocksDBLocalPersistence.PERSISTENCE_VERSION : DeliverMessageXodusLocalPersistence.PERSISTENCE_VERSION);
         metaFile.setPublishPayloadPersistenceVersion(payloadType == PersistenceType.FILE_NATIVE ? PublishPayloadRocksDBLocalPersistence.PERSISTENCE_VERSION : PublishPayloadXodusLocalPersistence.PERSISTENCE_VERSION);
         metaFile.setRetainedMessagesPersistenceType(retainedType);
+        metaFile.setDeliverMessagesPersistenceType(deliverType);
         metaFile.setPublishPayloadPersistenceType(payloadType);
 
         MetaFileService.writeMetaFile(systemInformation, metaFile);

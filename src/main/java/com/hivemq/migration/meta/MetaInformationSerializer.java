@@ -39,6 +39,11 @@ public class MetaInformationSerializer {
         final byte[] retainedMessagesPersistenceVersion =
                 metaInformation.getRetainedMessagesPersistenceVersion() != null ?
                         metaInformation.getRetainedMessagesPersistenceVersion().getBytes(UTF_8) : new byte[0];
+
+        final byte[] deliverMessagesPersistenceVersion =
+                metaInformation.getDeliverMessagesPersistenceVersion() != null ?
+                        metaInformation.getDeliverMessagesPersistenceVersion().getBytes(UTF_8) : new byte[0];
+
         final byte[] subscriptionPersistenceVersion = metaInformation.getSubscriptionPersistenceVersion() != null ?
                 metaInformation.getSubscriptionPersistenceVersion().getBytes(UTF_8) : new byte[0];
         final byte[] clientSessionPersistenceVersion = metaInformation.getClientSessionPersistenceVersion() != null ?
@@ -48,28 +53,35 @@ public class MetaInformationSerializer {
 
         final byte retainedMessagesPersistenceType = metaInformation.getRetainedMessagesPersistenceType() != null ?
                 (byte) metaInformation.getRetainedMessagesPersistenceType().ordinal() : -1;
+
+        final byte deliverMessagesPersistenceType = metaInformation.getDeliverMessagesPersistenceType() != null ?
+                (byte) metaInformation.getDeliverMessagesPersistenceType().ordinal() : -1;
+
         final byte publishPayloadPersistenceType = metaInformation.getPublishPayloadPersistenceType() != null ?
                 (byte) metaInformation.getPublishPayloadPersistenceType().ordinal() : -1;
 
-        final int bufferSize = 6 * 4 + //6 * int(4 byte) for byte[] length.
+        final int bufferSize = 7 * 4 + //6 * int(4 byte) for byte[] length.
                 hivemqVersion.length +
                 publishPayloadPersistenceVersion.length +
                 retainedMessagesPersistenceVersion.length +
+                deliverMessagesPersistenceVersion.length +
                 subscriptionPersistenceVersion.length +
                 clientSessionPersistenceVersion.length +
                 queuedMessagesPersistenceVersion.length +
-                2; //types
+                3; //types
 
         final ByteBuffer byteBuffer = ByteBuffer.allocate(bufferSize);
 
         putByteArray(hivemqVersion, byteBuffer);
         putByteArray(publishPayloadPersistenceVersion, byteBuffer);
         putByteArray(retainedMessagesPersistenceVersion, byteBuffer);
+        putByteArray(deliverMessagesPersistenceVersion, byteBuffer);
         putByteArray(subscriptionPersistenceVersion, byteBuffer);
         putByteArray(clientSessionPersistenceVersion, byteBuffer);
         putByteArray(queuedMessagesPersistenceVersion, byteBuffer);
 
         byteBuffer.put(retainedMessagesPersistenceType);
+        byteBuffer.put(deliverMessagesPersistenceType);
         byteBuffer.put(publishPayloadPersistenceType);
 
         return byteBuffer.array();
@@ -92,11 +104,13 @@ public class MetaInformationSerializer {
         final String hivemqVersion = getStringFromBuffer(metaFileAsByteBuffer);
         final String publishPayloadPersistenceVersion = getStringFromBuffer(metaFileAsByteBuffer);
         final String retainedMessagesPersistenceVersion = getStringFromBuffer(metaFileAsByteBuffer);
+        final String deliverMessagesPersistenceVersion = getStringFromBuffer(metaFileAsByteBuffer);
         final String subscriptionPersistenceVersion = getStringFromBuffer(metaFileAsByteBuffer);
         final String clientSessionPersistenceVersion = getStringFromBuffer(metaFileAsByteBuffer);
         final String queuedMessagesPersistenceVersion = getStringFromBuffer(metaFileAsByteBuffer);
 
         final PersistenceType retainedMessagePersistenceType = getTypeFromBuffer(metaFileAsByteBuffer);
+        final PersistenceType deliverMessagePersistenceType = getTypeFromBuffer(metaFileAsByteBuffer);
         final PersistenceType publishPayloadPersistenceType = getTypeFromBuffer(metaFileAsByteBuffer);
 
         final MetaInformation metaInformation = new MetaInformation();
@@ -105,10 +119,12 @@ public class MetaInformationSerializer {
         metaInformation.setClientSessionPersistenceVersion(clientSessionPersistenceVersion);
         metaInformation.setQueuedMessagesPersistenceVersion(queuedMessagesPersistenceVersion);
         metaInformation.setRetainedMessagesPersistenceVersion(retainedMessagesPersistenceVersion);
+        metaInformation.setDeliverMessagesPersistenceVersion(deliverMessagesPersistenceVersion);
         metaInformation.setSubscriptionPersistenceVersion(subscriptionPersistenceVersion);
         metaInformation.setPublishPayloadPersistenceVersion(publishPayloadPersistenceVersion);
 
         metaInformation.setRetainedMessagesPersistenceType(retainedMessagePersistenceType);
+        metaInformation.setDeliverMessagesPersistenceType(deliverMessagePersistenceType);
         metaInformation.setPublishPayloadPersistenceType(publishPayloadPersistenceType);
 
         //always true at this point

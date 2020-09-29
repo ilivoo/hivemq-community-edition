@@ -130,6 +130,19 @@ public class InternalConfigurations {
     //The block size used by rocksdb for the retained message persistence in bytes
     public static final int RETAINED_MESSAGE_BLOCK_SIZE = 32 * 1024;
 
+
+    //The configuration if rocks db is used instead of xodus for deliver messages.
+    public static final AtomicReference<PersistenceType> DELIVER_MESSAGE_PERSISTENCE_TYPE = new AtomicReference<>(PersistenceType.FILE_NATIVE);
+
+    //The memory that is used for rocksdb memtable as a portion of the RAM for the retained message persistence. (size = RAM/configValue)
+    public static final int DELIVER_MESSAGE_MEMTABLE_SIZE_PORTION = 32;
+
+    //The memory that is used for rocksdb block-cache as a portion of the RAM for the retained message persistence. (size = RAM/configValue)
+    public static final int DELIVER_MESSAGE_BLOCK_CACHE_SIZE_PORTION = 64;
+
+    //The block size used by rocksdb for the retained message persistence in bytes
+    public static final int DELIVER_MESSAGE_BLOCK_SIZE = 32 * 1024;
+
     /* ************************
      *   Payload Persistence  *
      **************************/
