@@ -7,7 +7,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.hivemq.bootstrap.ioc.lazysingleton.LazySingleton;
 import com.hivemq.configuration.service.InternalConfigurations;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
-import com.hivemq.extensions.services.general.IterationContextImpl;
 import com.hivemq.persistence.AbstractPersistence;
 import com.hivemq.persistence.ProducerQueues;
 import com.hivemq.persistence.SingleWriterService;
@@ -45,6 +44,11 @@ public class DeliverMessagePersistenceImpl extends AbstractPersistence implement
         this.singleWriter = singleWriterService.getDeliverMessageQueue();
         this.localPersistence = localPersistence;
         this.bucketCount = InternalConfigurations.PERSISTENCE_BUCKET_COUNT.get();
+    }
+
+    @Override
+    public void init() {
+        nextDeliverId.set(localPersistence.getMaxId());
     }
 
     @Override

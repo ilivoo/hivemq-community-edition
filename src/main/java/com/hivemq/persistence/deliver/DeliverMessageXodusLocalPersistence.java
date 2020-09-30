@@ -4,6 +4,7 @@ import com.hivemq.bootstrap.ioc.lazysingleton.LazySingleton;
 import com.hivemq.configuration.service.InternalConfigurations;
 import com.hivemq.exceptions.UnrecoverableException;
 import com.hivemq.extension.sdk.api.annotations.NotNull;
+import com.hivemq.extension.sdk.api.annotations.Nullable;
 import com.hivemq.migration.meta.PersistenceType;
 import com.hivemq.persistence.PersistenceStartup;
 import com.hivemq.persistence.local.xodus.EnvironmentUtil;
@@ -41,6 +42,8 @@ public class DeliverMessageXodusLocalPersistence extends XodusLocalPersistence i
     private final @NotNull PublishPayloadPersistence payloadPersistence;
 
     private final @NotNull DeliverMessageXodusSerializer serializer;
+    /* we just track increment maxId, not track remove*/
+    private AtomicLong maxId = new AtomicLong(0);
 
     @Inject
     public DeliverMessageXodusLocalPersistence(
@@ -93,6 +96,9 @@ public class DeliverMessageXodusLocalPersistence extends XodusLocalPersistence i
                     deliverMessageCounter.incrementAndGet();
                 }
             }
+        });
+        maxId.getAndUpdate(prev -> {
+            return deliverId > prev ? deliverId : prev;
         });
     }
 
@@ -226,12 +232,17 @@ public class DeliverMessageXodusLocalPersistence extends XodusLocalPersistence i
     @Override
     public void init() {
         try {
+            final AtomicLong prevMax = new AtomicLong(0);
             for (int i = 0; i < buckets.length; i++) {
                 final Bucket bucket = buckets[i];
                 bucket.getEnvironment().executeInReadonlyTransaction(txn -> {
                     try (final Cursor cursor = bucket.getStore().openCursor(txn)) {
 
                         while (cursor.getNext()) {
+                            long deliverId = serializer.deserializeKey(byteIterableToBytes(cursor.getKey()));
+                            prevMax.getAndUpdate(prev -> {
+                                return deliverId > prev ? deliverId : prev;
+                            });
                             PublishWithSenderDeliver publishWith = serializer.deserializeValue(byteIterableToBytes(cursor.getValue()));
                             payloadPersistence.incrementReferenceCounterOnBootstrap(publishWith.getPayloadId());
                             deliverMessageCounter.incrementAndGet();
@@ -239,11 +250,16 @@ public class DeliverMessageXodusLocalPersistence extends XodusLocalPersistence i
                     }
                 });
             }
-
+            maxId.set(prevMax.get());
         } catch (final ExodusException e) {
             log.error("An error occurred while preparing the Deliver Message persistence.");
             log.debug("Original Exception:", e);
             throw new UnrecoverableException(false);
         }
+    }
+
+    @Override
+    public long getMaxId() {
+        return maxId.get();
     }
 }

@@ -28,6 +28,8 @@ public interface DeliverMessageLocalPersistence extends LocalPersistence {
 
     void iterate(@NotNull ItemCallback callBack);
 
+    long getMaxId();
+
     interface ItemCallback {
 
         void onItem(@NotNull PublishWithSenderDeliver publishWith);

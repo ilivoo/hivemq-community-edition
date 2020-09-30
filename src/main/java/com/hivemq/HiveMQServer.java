@@ -36,6 +36,7 @@ import com.hivemq.migration.Migrations;
 import com.hivemq.migration.meta.PersistenceType;
 import com.hivemq.mqtt.services.InternalPublishService;
 import com.hivemq.persistence.PersistenceStartup;
+import com.hivemq.persistence.deliver.DeliverMessagePersistence;
 import com.hivemq.persistence.payload.PublishPayloadPersistence;
 import com.hivemq.statistics.UsageStatistics;
 import com.hivemq.util.TemporaryFileUtils;
@@ -60,6 +61,7 @@ public class HiveMQServer {
 
     private final @NotNull HiveMQNettyBootstrap nettyBootstrap;
     private final @NotNull PublishPayloadPersistence payloadPersistence;
+    private final @NotNull DeliverMessagePersistence deliverMessagePersistence;
     private final @NotNull PluginBootstrap pluginBootstrap;
     private final @NotNull AdminService adminService;
     private final @NotNull InternalPublishService publishService;
@@ -68,12 +70,14 @@ public class HiveMQServer {
     HiveMQServer(
             final @NotNull HiveMQNettyBootstrap nettyBootstrap,
             final @NotNull PublishPayloadPersistence payloadPersistence,
+            final @NotNull DeliverMessagePersistence deliverMessagePersistence,
             final @NotNull InternalPublishService publishService,
             final @NotNull PluginBootstrap pluginBootstrap,
             final @NotNull AdminService adminService) {
 
         this.nettyBootstrap = nettyBootstrap;
         this.payloadPersistence = payloadPersistence;
+        this.deliverMessagePersistence = deliverMessagePersistence;
         this.pluginBootstrap = pluginBootstrap;
         this.publishService = publishService;
         this.adminService = adminService;
@@ -82,6 +86,8 @@ public class HiveMQServer {
     public void start() throws Exception {
 
         payloadPersistence.init();
+
+        deliverMessagePersistence.init();
 
         pluginBootstrap.startPluginSystem();
 

@@ -37,6 +37,8 @@ public class DeliverMessageRocksDBLocalPersistence extends RocksDBLocalPersisten
 
     private final @NotNull DeliverMessageXodusSerializer serializer;
 
+    private AtomicLong maxId = new AtomicLong(0);
+
     @Inject
     DeliverMessageRocksDBLocalPersistence(
             final @NotNull LocalPersistenceFileUtil localPersistenceFileUtil,
@@ -83,11 +85,16 @@ public class DeliverMessageRocksDBLocalPersistence extends RocksDBLocalPersisten
     @Override
     public void init() {
         try {
+            long max = 0;
             for (int i = 0; i < buckets.length; i++) {
                 final RocksDB bucket = buckets[i];
                 try (final RocksIterator iterator = bucket.newIterator()) {
                     iterator.seekToFirst();
                     while (iterator.isValid()) {
+                        long deliverId = serializer.deserializeKey(iterator.key());
+                        if (deliverId > max) {
+                            max = deliverId;
+                        }
                         final PublishWithSenderDeliver publishWith = serializer.deserializeValue(iterator.value());
                         payloadPersistence.incrementReferenceCounterOnBootstrap(publishWith.getPayloadId());
                         deliverMessageCounter.incrementAndGet();
@@ -95,12 +102,17 @@ public class DeliverMessageRocksDBLocalPersistence extends RocksDBLocalPersisten
                     }
                 }
             }
-
+            maxId.set(max);
         } catch (final ExodusException e) {
             log.error("An error occurred while preparing the Deliver Message persistence.");
             log.debug("Original Exception:", e);
             throw new UnrecoverableException(false);
         }
+    }
+
+    @Override
+    public long getMaxId() {
+        return maxId.get();
     }
 
     @Override
@@ -138,6 +150,9 @@ public class DeliverMessageRocksDBLocalPersistence extends RocksDBLocalPersisten
             log.error("An error occurred while persisting a deliver message.");
             log.debug("Original Exception:", e);
         }
+        maxId.getAndUpdate(prev -> {
+            return deliverId > prev ? deliverId : prev;
+        });
     }
 
     @Override

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.hivemq.util.ThreadPreConditions.SINGLE_WRITER_THREAD_PREFIX;
@@ -27,6 +28,13 @@ public class DeliverMessageMemoryLocalPersistence implements DeliverMessageLocal
     private final @NotNull PublishPayloadPersistence payloadPersistence;
 
     private final int bucketCount;
+
+    private final AtomicLong maxId = new AtomicLong(0);
+
+    @Override
+    public long getMaxId() {
+        return maxId.get();
+    }
 
     @Inject
     public DeliverMessageMemoryLocalPersistence(@NotNull final PublishPayloadPersistence payloadPersistence) {
@@ -57,6 +65,9 @@ public class DeliverMessageMemoryLocalPersistence implements DeliverMessageLocal
 
         final Map<Long, PublishWithSenderDeliver> bucket = buckets[bucketIndex];
         bucket.put(deliverId, publishWith);
+        maxId.getAndUpdate(prev -> {
+            return deliverId > prev ? deliverId : prev;
+        });
     }
 
     @Override

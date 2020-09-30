@@ -6,6 +6,9 @@ import com.hivemq.extension.sdk.api.annotations.NotNull;
 import java.util.Iterator;
 
 public interface DeliverMessagePersistence {
+
+    void init();
+
     long size();
 
     @NotNull
